@@ -1,12 +1,15 @@
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  // Escuchar la lista de puertos que envía main.js
-  onSerialPortsList: (callback) => ipcRenderer.on('serial-ports-list', (_event, value) => callback(value)),
-  
-  // Enviar el ID del puerto seleccionado de vuelta a main.js
-  selectSerialPort: (portId) => ipcRenderer.send('serial-port-selected', portId),
-  
-  // Cancelar la selección
-  cancelSerialPortSelection: () => ipcRenderer.send('serial-port-cancelled')
-})
+contextBridge.exposeInMainWorld("electronAPI", {
+  // ── Serial port ─────────────────────────────────────────────────
+  onSerialPortsList: (cb) =>
+    ipcRenderer.on("serial-ports-list", (_event, value) => cb(value)),
+  selectSerialPort: (portId) =>
+    ipcRenderer.send("serial-port-selected", portId),
+  cancelSerialPortSelection: () => ipcRenderer.send("serial-port-cancelled"),
+
+  // ── PDF generation ──────────────────────────────────────────────
+  // Returns Promise<{ success: boolean, path?: string, reason?: string }>
+  generatePDF: (formData, outputPath = null) =>
+    ipcRenderer.invoke("generate-pdf", { formData, outputPath }),
+});

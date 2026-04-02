@@ -8,7 +8,8 @@
     "dev:react": "vite",
     "dev": "concurrently -k \"cross-env NODE_ENV=development npm run dev:react\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
     "build": "vite build",
-    "dist": "npm run build && electron-builder"
+    "dist": "npm run build && electron-builder",
+    "setup:python": "node scripts/setup-python.js"
   },
   "build": {
     "appId": "com.tuempresa.pressurescope",
@@ -20,6 +21,19 @@
       "dist/**/*",
       "electron/**/*"
     ],
+    "extraResources": [
+      {
+        "from": "scripts/generate_report.py",
+        "to": "scripts/generate_report.py"
+      },
+      {
+        "from": "vendor/python/",
+        "to": "python/",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
     "win": {
       "target": "nsis",
       "icon": "public/icon.ico"
@@ -29,7 +43,9 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "installerLanguages": ["es_ES"],
+      "installerLanguages": [
+        "es_ES"
+      ],
       "language": "3082"
     }
   },
